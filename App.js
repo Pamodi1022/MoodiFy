@@ -1,11 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import SplashScreen from './Components/SplashScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import AppNavigator from './Components/AppNavigator';
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 4000); // Transition after 4 seconds
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={{ flex: 1 }}>
+        <NavigationContainer>
+          {showSplash ? <SplashScreen /> : <AppNavigator />}
+        </NavigationContainer>
     </View>
   );
 }
