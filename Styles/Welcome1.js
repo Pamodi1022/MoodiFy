@@ -1,17 +1,35 @@
 import { StyleSheet } from 'react-native';
 
-export default StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#BDD3CC',
     padding: 20,
+  },
+  pageIndicator: {
+    flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    backgroundColor: '#FFFFFF',
+  },
+  inactiveDot: {
+    backgroundColor: '#007C5E',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#2A2539',
     marginBottom: 20,
+    marginTop: 25,
   },
   description: {
     fontSize: 16,
@@ -30,11 +48,13 @@ export default StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 200,
+    height: 230,
     marginBottom: 30,
+    marginTop: 10,
   },
   button: {
     backgroundColor: '#EFC8C8',
+    marginTop: 40,
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: 'center',
@@ -61,4 +81,6 @@ export default StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
+export default styles;
 

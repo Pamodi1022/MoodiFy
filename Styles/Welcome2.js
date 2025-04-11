@@ -5,6 +5,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#BDD3CC',
   },
+  pageIndicator: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    backgroundColor: '#FFFFFF',
+  },
+  inactiveDot: {
+    backgroundColor: '#007C5E',
+  },
   scrollContainer: {
     flex: 1,
   },
@@ -37,14 +55,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'rgb(239, 252, 246)',
     borderRadius: 15,
-    padding: 15,
+    padding: 12,
     marginBottom: 10,
+    marginLeft: 15,
     justifyContent: 'space-between',
+
   },
   colorOption: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     borderRadius: 20,
+    marginHorizontal: 5,
+    borderWidth: 1,
   },
   emojiTheme: {
     flexDirection: 'row',
@@ -139,6 +161,15 @@ const styles = StyleSheet.create({
   selectedPalette: {
     borderWidth: 2,
     borderColor: 'rgb(81, 80, 80)',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 18,
+    color: '#333',
   },
 });
 
