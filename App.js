@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, StatusBar } from 'react-native';
 import SplashScreen from './Components/SplashScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './Components/AppNavigator';
@@ -16,6 +16,7 @@ export default function App() {
 
   return (
     <View style={{ flex: 1 }}>
+      <StatusBar backgroundColor="#BDD3CC" barStyle="dark-content" />
         <NavigationContainer>
           {showSplash ? <SplashScreen /> : <AppNavigator />}
         </NavigationContainer>
