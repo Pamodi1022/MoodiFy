@@ -159,6 +159,9 @@ export const MoodProvider = ({ children }) => {
   const [moodNames, setMoodNames] = useState(defaultMoodNames);
   const [moodEntries, setMoodEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Add a state for the currently selected mood
+  const [selectedMood, setSelectedMood] = useState(null);
 
   // Save theme selections to AsyncStorage
   const saveThemeSelections = useCallback(async () => {
@@ -289,6 +292,15 @@ export const MoodProvider = ({ children }) => {
     emoji: selectedEmojiTheme[index]?.emoji || "•_•",
   }));
 
+  // Set the selected mood
+  const setMood = useCallback((moodIndex) => {
+    if (moodIndex !== null && moodIndex >= 0 && moodIndex < moodItems.length) {
+      setSelectedMood(moodItems[moodIndex]);
+    } else {
+      setSelectedMood(null);
+    }
+  }, [moodItems]);
+
   // Provide the context value
   const contextValue = {
     // Data
@@ -301,10 +313,12 @@ export const MoodProvider = ({ children }) => {
     selectedColorPaletteIndex,
     selectedEmojiThemeIndex,
     isLoading,
+    selectedMood,
     
     // State setters
     setSelectedColorPaletteIndex,
     setSelectedEmojiThemeIndex,
+    setSelectedMood: setMood,
     
     // AsyncStorage operations
     saveThemeSelections,
