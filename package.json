@@ -27,7 +27,9 @@
     "expo-file-system": "~18.0.12",
     "react-native-get-random-values": "~1.11.0",
     "expo-av": "~15.0.2",
-    "expo-image-picker": "~16.0.6"
+    "expo-image-picker": "~16.0.6",
+    "expo-sharing": "~13.0.1",
+    "expo-media-library": "~17.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
