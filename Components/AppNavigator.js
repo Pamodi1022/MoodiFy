@@ -6,6 +6,9 @@ import Welcome3 from './Welcome3';
 import Home from './Home';
 import Moods from './Moods';
 import Journal from './Journal';
+import Dashboard from './Dashboard';
+import JournalEdit from './JournalEdit';
+import Favourite from './Favourite';
 
 const Stack = createStackNavigator();
 
@@ -18,6 +21,9 @@ export default function AppNavigator() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Moods" component={Moods} />
         <Stack.Screen name="Journal" component={Journal} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen name="JournalEdit" component={JournalEdit} />
+        <Stack.Screen name="Favourite" component={Favourite} />
       </Stack.Navigator>
   );
 }
