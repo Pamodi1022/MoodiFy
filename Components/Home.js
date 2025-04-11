@@ -15,7 +15,7 @@ import { MoodContext } from './MoodContext';
 import styles from '../Styles/Home';
 
 const Home = ({ navigation }) => {
-  const { moodItems } = useContext(MoodContext);
+  const { moodItems, setSelectedMood } = useContext(MoodContext);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [selectedMoodIndex, setSelectedMoodIndex] = useState(null);
@@ -27,10 +27,6 @@ const Home = ({ navigation }) => {
   const handleEditMoods = () => {
     navigation.navigate('Moods'); // this should match the screen name in your navigator
   };
-
-  const handleMoodSelected = () => {
-    navigation.navigate('Journal'); // this should match the screen name in your navigator
-  }
 
   // Formatted date text that changes based on if it's today or another date
   const getFormattedDateText = () => {
@@ -80,6 +76,10 @@ const Home = ({ navigation }) => {
   // Handle mood selection
   const handleMoodSelect = (index) => {
     setSelectedMoodIndex(index);
+    // Set the selected mood in the context
+    setSelectedMood(index);
+    // Navigate to Journal page
+    navigation.navigate('Journal');
   };
 
   return (
@@ -129,10 +129,7 @@ const Home = ({ navigation }) => {
                         { backgroundColor: mood.color },
                         selectedMoodIndex === index && styles.selectedMoodCircle
                     ]}
-                    onPress={() => {
-                        handleMoodSelect(index);
-                        navigation.navigate('Journal', { mood }); 
-                    }}
+                    onPress={() => handleMoodSelect(index)}
                     >
                 <Text style={styles.moodEmoji}>{mood.emoji}</Text>
                 </TouchableOpacity>
@@ -205,4 +202,4 @@ const Home = ({ navigation }) => {
   );
 };
 
-export default Home;  
+export default Home;
