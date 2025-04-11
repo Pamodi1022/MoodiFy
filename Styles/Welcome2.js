@@ -171,6 +171,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#333',
   },
+  closeButton: {
+    position: 'absolute',
+    marginTop: 20,
+    marginLeft: 20,
+    marginBottom: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1.8,
+    borderColor: '#333',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  closeButtonText: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

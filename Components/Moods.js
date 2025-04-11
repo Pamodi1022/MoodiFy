@@ -28,8 +28,8 @@ const MoodPaletteApp = ({ navigation }) => {
   const handleNext = async () => {
     try {
       await saveThemeSelections();
-      navigation.navigate('Welcome3');
-      console.log("Selections saved and navigating to Welcome3");
+      navigation.navigate('Home');
+      console.log("Selections saved and navigating to Home");
     } catch (error) {
       Alert.alert(
         "Save Error",
@@ -71,19 +71,18 @@ const MoodPaletteApp = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.pageIndicator}>
-        <View style={[styles.dot, styles.inactiveDot]} />
-        <View style={[styles.dot, styles.activeDot]} />
-        <View style={[styles.dot, styles.inactiveDot]} />
-      </View>
       <ScrollView style={styles.scrollContainer}>
+        <TouchableOpacity 
+                style={styles.closeButton}
+                onPress={() => navigation.goBack()}>
+                <Text style={styles.closeButtonText}>✕</Text>
+        </TouchableOpacity>
         <View style={styles.content}>
-          <Text style={styles.title}>
+          <Text style={[styles.title, { marginTop: 25 }]}>
             Create Your Personal{"\n"}Mood Palette
           </Text>
           <Text style={styles.subtitle}>
-            Match the color of your moods to your personality. Later you can
-            change emojis, names, and even add new ones.
+            Match the color of your moods to your personality. 
           </Text>
 
           <Text style={styles.sectionTitle}>Colors</Text>
