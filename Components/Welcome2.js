@@ -1,226 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
-  StatusBar,
   FlatList,
   Alert,
 } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import styles from "../Styles/Welcome2"; // Import your styles
-
-// Keys for AsyncStorage
-const COLOR_PALETTE_KEY = '@mood_app:selectedColorPalette';
-const EMOJI_THEME_KEY = '@mood_app:selectedEmojiTheme';
+import styles from "../Styles/Welcome2";
+import { MoodContext } from "./MoodContext"; // Import the context
 
 const MoodPaletteApp = ({ navigation }) => {
-  // Track which color palette is currently selected
-  const [selectedColorPalette, setSelectedColorPalette] = useState(0);
-  // Track which emoji theme is currently selected
-  const [selectedEmojiTheme, setSelectedEmojiTheme] = useState(0);
-  // Track if data is loading
-  const [isLoading, setIsLoading] = useState(true);
-
-  const emojiThemes = [
-    // Theme 1: Simple faces with dots
-    [
-      { emoji: "•◡•" },
-      { emoji: "•ᴗ•" },
-      { emoji: "•_•" },
-      { emoji: "•︵•" },
-      { emoji: "≥﹏≤" },
-    ],
-    // Theme 2: Round eyes
-    [
-      { emoji: "◕ᴗ◕" },
-      { emoji: "◕ᴗ◕" },
-      { emoji: "◕_◕" },
-      { emoji: "◕︵◕" },
-      { emoji: "×_×" },
-    ],
-    // Theme 3: Curved eyes
-    [
-      { emoji: "◠◡◠" },
-      { emoji: "◠ᴗ◠" },
-      { emoji: "◠_◠" },
-      { emoji: "◠︵◠" },
-      { emoji: "×﹏×" },
-    ],
-    // Theme 4: Mixed expressions
-    [
-      { emoji: "◠‿◠" },
-      { emoji: "◠◠" },
-      { emoji: "◠︵◠" },
-      { emoji: "◠﹏◠" },
-      { emoji: "◠益◠" },
-    ],
-    // Theme 5: Varied expressions
-    [
-      { emoji: "◠‿◠" },
-      { emoji: "◠_◠" },
-      { emoji: "◠_◠" },
-      { emoji: "◠~◠" },
-      { emoji: "×o×" },
-    ],
-    // Theme 6: Minimal expressions
-    [
-      { emoji: "^ᴗ^" },
-      { emoji: "•ᴗ•" },
-      { emoji: "•-•" },
-      { emoji: "•︵•" },
-      { emoji: "•`•" },
-    ],
-    // Theme 7: Kaomoji
-    [
-      { emoji: "(ᵔᴥᵔ)" },
-      { emoji: "(ᵔ◡ᵔ)" },
-      { emoji: "(•_•)" },
-      { emoji: "(´･･`)" },
-      { emoji: "(•́︿•̀)" },
-    ],
-  ];
-
-  const colorPalettes = [
-    // Palette 1: Original colors
-    [
-      { color: "#1ABC9C", name: "Teal" },
-      { color: "#A7D129", name: "Lime" },
-      { color: "#5DADE2", name: "Blue" },
-      { color: "#F39C12", name: "Orange" },
-      { color: "#E74C3C", name: "Red" },
-    ],
-    // Palette 2: More vibrant colors
-    [
-      { color: "#8E44AD", name: "Purple" },
-      { color: "#E91E63", name: "Pink" },
-      { color: "#D35400", name: "Dark Orange" },
-      { color: "#F1C40F", name: "Yellow" },
-      { color: "#CDDC39", name: "Olive" },
-    ],
-    // Palette 3: Pastel colors
-    [
-      { color: "#AED6F1", name: "Pastel Blue" },
-      { color: "#FAD7A0", name: "Pastel Orange" },
-      { color: "#D7BDE2", name: "Pastel Purple" },
-      { color: "#ABEBC6", name: "Pastel Green" },
-      { color: "#F5B7B1", name: "Pastel Red" },
-    ],
-    // Palette 4: Dark colors
-    [
-      { color: "#34495E", name: "Navy Blue" },
-      { color: "#7D3C98", name: "Dark Purple" },
-      { color: "#2E4053", name: "Dark Gray" },
-      { color: "#784212", name: "Brown" },
-      { color: "#7B241C", name: "Dark Red" },
-    ],
-    // Palette 5: Additional colors
-    [
-      { color: "#00CED1", name: "Turquoise" },
-      { color: "#FF9FF3", name: "Light Pink" },
-      { color: "#F4D03F", name: "Golden Yellow" },
-      { color: "#BDC3C7", name: "Silver" },
-      { color: "#27AE60", name: "Emerald Green" },
-    ],
-    // Palette 6: Gradient-inspired solid colors
-    [
-      { color: "#3498DB", name: "Royal Blue" },
-      { color: "#16A085", name: "Deep Teal" },
-      { color: "#E67E22", name: "Pumpkin" },
-      { color: "#9B59B6", name: "Amethyst" },
-      { color: "#2ECC71", name: "Mint Green" },
-    ],
-    // Palette 7: Muted tones
-    [
-      { color: "#95A5A6", name: "Gray" },
-      { color: "#D5DBDB", name: "Light Gray" },
-      { color: "#EAEDED", name: "Off White" },
-      { color: "#7F8C8D", name: "Slate Gray" },
-      { color: "#566573", name: "Charcoal" },
-    ],
-    // Palette 8: User palette colors
-    [
-      { color: "#EDEFC8", name: "Pale Yellow" },
-      { color: "#EAE9E5", name: "Light Beige" },
-      { color: "#EFC8C8", name: "Light Pink" },
-      { color: "#BDD3CC", name: "Light Teal" },
-      { color: "#7C6767", name: "Taupe" },
-    ],
-    // Palette 9: Bright accent colors
-    [
-      { color: "#58D68D", name: "Bright Green" },
-      { color: "#5DADE2", name: "Sky Blue" },
-      { color: "#F7DC6F", name: "Canary Yellow" },
-      { color: "#EC7063", name: "Coral" },
-      { color: "#BB8FCE", name: "Lavender" },
-    ],
-  ];
-
-  // Load saved selections from AsyncStorage when component mounts
-  useEffect(() => {
-    const loadSavedSelections = async () => {
-      try {
-        // Load the color palette selection
-        const savedColorPalette = await AsyncStorage.getItem(COLOR_PALETTE_KEY);
-        if (savedColorPalette !== null) {
-          setSelectedColorPalette(parseInt(savedColorPalette, 10));
-        }
-
-        // Load the emoji theme selection
-        const savedEmojiTheme = await AsyncStorage.getItem(EMOJI_THEME_KEY);
-        if (savedEmojiTheme !== null) {
-          setSelectedEmojiTheme(parseInt(savedEmojiTheme, 10));
-        }
-      } catch (error) {
-        console.error('Error loading saved selections:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadSavedSelections();
-  }, []);
-
-  // Function to save selections to AsyncStorage
-  const saveSelections = async () => {
-    try {
-      // Save both selections at once
-      await Promise.all([
-        AsyncStorage.setItem(COLOR_PALETTE_KEY, selectedColorPalette.toString()),
-        AsyncStorage.setItem(EMOJI_THEME_KEY, selectedEmojiTheme.toString())
-      ]);
-      return true;
-    } catch (error) {
-      console.error('Error saving selections:', error);
-      return false;
-    }
-  };
-
-  // Function to select emoji theme
-  const selectEmojiTheme = (index) => {
-    setSelectedEmojiTheme(index);
-  };
-
-  // Function to select color palette
-  const selectColorPalette = (index) => {
-    setSelectedColorPalette(index);
-  };
+  // Use the context instead of local state
+  const { 
+    colorPalettes, 
+    emojiThemes,
+    selectedColorPaletteIndex, 
+    selectedEmojiThemeIndex,
+    setSelectedColorPaletteIndex,
+    setSelectedEmojiThemeIndex,
+    saveThemeSelections,
+    isLoading
+  } = useContext(MoodContext);
 
   // Handle next button press - save selections and navigate
   const handleNext = async () => {
-    const success = await saveSelections();
-    if (success) {
+    try {
+      await saveThemeSelections();
       navigation.navigate('Welcome3');
       console.log("Selections saved and navigating to Welcome3");
-    } else {
+    } catch (error) {
       Alert.alert(
         "Save Error",
         "There was a problem saving your selections. Please try again.",
         [{ text: "OK" }]
       );
-      console.log("Error saving selections");
+      console.error("Error saving selections:", error);
     }
   };
 
@@ -229,9 +45,9 @@ const MoodPaletteApp = ({ navigation }) => {
     <TouchableOpacity
       style={[
         styles.colorPalette,
-        selectedColorPalette === index && styles.selectedPalette,
+        selectedColorPaletteIndex === index && styles.selectedPalette,
       ]}
-      onPress={() => selectColorPalette(index)}
+      onPress={() => setSelectedColorPaletteIndex(index)}
     >
       {item.map((colorItem, colorIndex) => (
         <View
@@ -287,9 +103,9 @@ const MoodPaletteApp = ({ navigation }) => {
               key={themeIndex}
               style={[
                 styles.emojiTheme,
-                selectedEmojiTheme === themeIndex && styles.selectedTheme,
+                selectedEmojiThemeIndex === themeIndex && styles.selectedTheme,
               ]}
-              onPress={() => selectEmojiTheme(themeIndex)}
+              onPress={() => setSelectedEmojiThemeIndex(themeIndex)}
             >
               {theme.map((item, index) => (
                 <View
@@ -299,7 +115,7 @@ const MoodPaletteApp = ({ navigation }) => {
                     // Use the colors from the selected color palette
                     {
                       backgroundColor:
-                        colorPalettes[selectedColorPalette][index].color,
+                        colorPalettes[selectedColorPaletteIndex][index].color,
                     },
                   ]}
                 >
