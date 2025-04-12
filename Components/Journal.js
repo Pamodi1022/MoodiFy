@@ -74,8 +74,13 @@ const JournalPage = () => {
           setPhotoBase64(parsedData.photoBase64 || null);
           setRecordingPath(parsedData.recordingPath || null);
           setHasRecording(parsedData.hasRecording || false);
+          
+          // If we have mood data in the journal entry, use that
+          if (parsedData.mood) {
+            setSelectedMood(parsedData.mood);
+          }
         }
-
+    
         // Create directory if it doesn't exist
         const exists = await FileSystem.getInfoAsync(journalDir);
         if (!exists.exists) {
@@ -87,7 +92,7 @@ const JournalPage = () => {
         console.error("Error loading journal data:", error);
       }
     };
-
+    
     loadJournalData();
 
     // Audio setup
@@ -499,15 +504,12 @@ const JournalPage = () => {
     );
   };
 
-  // Save journal entry
   const saveJournal = async () => {
     try {
       // Get all journal entries
       const journalEntriesJson = await AsyncStorage.getItem("journal_entries");
-      let journalEntries = journalEntriesJson
-        ? JSON.parse(journalEntriesJson)
-        : [];
-
+      let journalEntries = journalEntriesJson ? JSON.parse(journalEntriesJson) : [];
+  
       // Create entry object with complete mood data
       const journalData = {
         id: journalId,
@@ -515,37 +517,52 @@ const JournalPage = () => {
         mood: selectedMood, // Save the complete mood object
         note,
         activities: selectedActivities,
-        photo,
+        photo: photo ? {
+          uri: photo.uri,
+          name: photo.name,
+          type: photo.type,
+        } : null,
         photoBase64, // Include the base64 image data
         recordingPath,
         hasRecording,
         timestamp: new Date().toISOString(),
       };
-
+  
       // Check if entry already exists
-      const existingIndex = journalEntries.findIndex(
-        (entry) => entry.id === journalId
-      );
+      const existingIndex = journalEntries.findIndex(entry => entry.id === journalId);
       if (existingIndex >= 0) {
         journalEntries[existingIndex] = journalData;
       } else {
         journalEntries.unshift(journalData);
       }
-
+  
       // Save updated entries
-      await AsyncStorage.setItem(
-        "journal_entries",
-        JSON.stringify(journalEntries)
-      );
-
+      await AsyncStorage.setItem("journal_entries", JSON.stringify(journalEntries));
+  
+      // Also save mood entries separately for calendar view
+      const moodEntry = {
+        id: uuidv4(),
+        date: new Date().toISOString(),
+        moodId: selectedMood?.id,
+        moodData: selectedMood,
+        journalId: journalId,
+      };
+  
+      // Get existing mood entries or create new array
+      const existingMoodEntries = await AsyncStorage.getItem("mood_entries");
+      let moodEntries = existingMoodEntries ? JSON.parse(existingMoodEntries) : [];
+      
+      // Add new mood entry
+      moodEntries.push(moodEntry);
+      
+      // Save back to AsyncStorage
+      await AsyncStorage.setItem("mood_entries", JSON.stringify(moodEntries));
+  
       // Save the selected mood separately for potential reuse
       if (selectedMood) {
-        await AsyncStorage.setItem(
-          "last_selected_mood",
-          JSON.stringify(selectedMood)
-        );
+        await AsyncStorage.setItem("last_selected_mood", JSON.stringify(selectedMood));
       }
-
+  
       Alert.alert("Success", "Journal entry saved successfully!", [
         { text: "OK", onPress: () => navigation.navigate("Dashboard") },
       ]);
