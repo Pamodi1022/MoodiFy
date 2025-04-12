@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#222",
   },
@@ -36,13 +36,12 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#111",
-    paddingVertical: 8,
+    backgroundColor: "transparent",
     paddingHorizontal: 16,
     marginHorizontal: 16,
     marginVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1,
+    borderRadius: 20,
+    borderWidth: 1.8,
     borderColor: "#333",
   },
   searchIcon: {
@@ -51,7 +50,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: 40,
-    color: "#fff",
+    color: "#000",
     fontSize: 16,
   },
   clearButton: {
@@ -87,7 +86,6 @@ const styles = StyleSheet.create({
     position: "relative",
     marginBottom: 16,
   },
-
   journalCard: {
     backgroundColor: "#2A2539",
     borderRadius: 12,
@@ -229,7 +227,7 @@ const styles = StyleSheet.create({
   noResultsText: {
     fontSize: 18,
     fontWeight: "500",
-    color: "#ddd",
+    color: "black",
     marginTop: 16,
   },
   noResultsSubtext: {
