@@ -9,6 +9,8 @@ import Journal from './Journal';
 import Dashboard from './Dashboard';
 import JournalEdit from './JournalEdit';
 import Favourite from './Favourite';
+import JournalView from './JournalView';
+import Calendar from './Calendar';
 
 const Stack = createStackNavigator();
 
@@ -24,6 +26,8 @@ export default function AppNavigator() {
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="JournalEdit" component={JournalEdit} />
         <Stack.Screen name="Favourite" component={Favourite} />
+        <Stack.Screen name="JournalView" component={JournalView} />
+        <Stack.Screen name="Calendar" component={Calendar} />
       </Stack.Navigator>
   );
 }

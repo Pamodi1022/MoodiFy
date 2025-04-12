@@ -12,6 +12,7 @@ import {
   Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
@@ -35,6 +36,10 @@ const Dashboard = () => {
   const [showMoodSelection, setShowMoodSelection] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedJournal, setSelectedJournal] = useState(null);
+
+  const navigateToFavorites = () => {
+    navigation.navigate('Favourite');
+  };
 
   // Get the current month and year for header
   const monthYearDisplay = format(currentMonth, 'MMMM yyyy');
@@ -211,26 +216,86 @@ const Dashboard = () => {
     setShowMoodSelection(!showMoodSelection);
   };
 
-  // Delete journal entry
-  const deleteJournalEntry = async (journalId) => {
+// Delete journal entry
+const deleteJournalEntry = async (journalId) => {
+  try {
+    // Get all journal entries from AsyncStorage
+    const journalEntriesJson = await AsyncStorage.getItem('journal_entries');
+    if (!journalEntriesJson) return;
+    
+    let journalEntries = JSON.parse(journalEntriesJson);
+    
+    // Find the journal entry to delete
+    const journalToDelete = journalEntries.find(j => j.id === journalId);
+    if (!journalToDelete) return;
+    
+    // Delete associated files (photo and recording)
     try {
-      // Remove from local state
-      const updatedJournals = journals.filter(journal => journal.id !== journalId);
-      setJournals(updatedJournals);
+      // Delete photo if exists
+      if (journalToDelete.photo?.uri) {
+        await FileSystem.deleteAsync(journalToDelete.photo.uri);
+      }
       
-      // Update filtered journals
-      const updatedFiltered = filteredJournals.filter(journal => journal.id !== journalId);
-      setFilteredJournals(updatedFiltered);
+      // Delete recording if exists
+      if (journalToDelete.recordingPath) {
+        await FileSystem.deleteAsync(journalToDelete.recordingPath);
+      }
       
-      // Update in AsyncStorage
-      await AsyncStorage.setItem('journal_entries', JSON.stringify(updatedJournals));
-      
-      Alert.alert('Success', 'Journal entry deleted successfully');
+      // Delete journal directory if exists
+      const journalDir = `${FileSystem.documentDirectory}journal_${journalId}`;
+      const dirInfo = await FileSystem.getInfoAsync(journalDir);
+      if (dirInfo.exists) {
+        await FileSystem.deleteAsync(journalDir, { idempotent: true });
+      }
     } catch (error) {
-      console.error('Error deleting journal entry:', error);
-      Alert.alert('Error', 'Failed to delete journal entry');
+      console.error('Error deleting journal files:', error);
     }
-  };
+    
+    // Remove from favorites if it exists there
+    try {
+      const favoritesJson = await AsyncStorage.getItem('favorite_journals');
+      if (favoritesJson) {
+        let favorites = JSON.parse(favoritesJson);
+        favorites = favorites.filter(fav => fav.id !== journalId);
+        await AsyncStorage.setItem('favorite_journals', JSON.stringify(favorites));
+      }
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+    }
+    
+    // Remove from mood entries if it exists there
+    try {
+      const moodEntriesJson = await AsyncStorage.getItem('mood_entries');
+      if (moodEntriesJson) {
+        let moodEntries = JSON.parse(moodEntriesJson);
+        moodEntries = moodEntries.filter(entry => entry.journalId !== journalId);
+        await AsyncStorage.setItem('mood_entries', JSON.stringify(moodEntries));
+      }
+    } catch (error) {
+      console.error('Error removing from mood entries:', error);
+    }
+    
+    // Update the journal entries by removing the deleted one
+    const updatedJournals = journalEntries.filter(journal => journal.id !== journalId);
+    
+    // Save the updated list back to AsyncStorage
+    await AsyncStorage.setItem('journal_entries', JSON.stringify(updatedJournals));
+    
+    // Update local state
+    setJournals(updatedJournals);
+    setFilteredJournals(updatedJournals.filter(journal => {
+      const journalDate = new Date(journal.timestamp);
+      const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+      const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+      return journalDate >= startOfMonth && journalDate <= endOfMonth;
+    }));
+    
+    Alert.alert('Success', 'Journal entry deleted successfully');
+  } catch (error) {
+    console.error('Error deleting journal entry:', error);
+    Alert.alert('Error', 'Failed to delete journal entry');
+  }
+};
 
 // Enhanced handleDropdownOption function
 const handleDropdownOption = async (option) => {
@@ -829,7 +894,7 @@ const handleExportVoiceMemo = async (journal) => {
 const viewJournalDetails = (journal) => {
     navigation.navigate('JournalView', { 
       journalId: journal.id,
-      journalData: journal // Pass the entire journal object if needed
+      journalData: journal 
     });
   };
   
@@ -878,7 +943,7 @@ const viewJournalDetails = (journal) => {
                         setShowDropdown(true);
                       }}
                   >
-                    <Icon name="dots-horizontal" size={20} color="#777" />
+                    <Icon name="dots-horizontal" size={20} color="white" />
                   </TouchableOpacity>
                 </View>
                 
@@ -923,7 +988,7 @@ const viewJournalDetails = (journal) => {
                           style={styles.audioPlayButton}
                           onPress={() => playRecordedAudio(entry.recordingPath)}
                         >
-                          <Icon name="play" size={24} color="#fff" />
+                          <Icon name="play" size={24} color="black" />
                         </TouchableOpacity>
                       </View>
                     </TouchableOpacity>
@@ -955,24 +1020,24 @@ const viewJournalDetails = (journal) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="black" barStyle="light-content" />
+      <StatusBar backgroundColor="#BDD3CC" barStyle="dark-content" />
       
       {/* Header */}
       <View style={styles.header}>     
         <View style={styles.monthNav}>
           <TouchableOpacity onPress={goToPreviousMonth} style={styles.navButton}>
-            <Icon name="chevron-left" size={24} color="#fff" />
+            <Icon name="chevron-left" size={24} color="black" />
           </TouchableOpacity>
           
           <Text style={styles.monthTitle}>{monthYearDisplay}</Text>
           
           <TouchableOpacity onPress={goToNextMonth} style={styles.navButton}>
-            <Icon name="chevron-right" size={24} color="#fff" />
+            <Icon name="chevron-right" size={24} color="black" />
           </TouchableOpacity>
         </View>
         
         <TouchableOpacity onPress={toggleSearch} style={styles.searchButton}>
-          <Icon name={showSearch ? "close" : "magnify"} size={24} color="#13d479" />
+          <Icon name={showSearch ? "close" : "magnify"} size={24} color="black" />
         </TouchableOpacity>
       </View>
       
@@ -1021,7 +1086,7 @@ const viewJournalDetails = (journal) => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.noResultsContainer}>
-              <Icon name="magnify" size={48} color="#ccc" />
+              <Icon name="magnify" size={48} color="black" />
               <Text style={styles.noResultsText}>No journal entries found</Text>
               {searchQuery.length > 0 && (
                 <Text style={styles.noResultsSubtext}>
@@ -1036,12 +1101,12 @@ const viewJournalDetails = (journal) => {
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem}>
-          <Icon name="notebook" size={22} color="#fff" />
+          <Icon name="notebook" size={22} color="black" />
           <Text style={styles.navText}>Entries</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.navItem}>
-          <Icon name="chart-line" size={22} color="#666" />
+          <Icon name="chart-line" size={22} color="#666" fontWeight="bold"/>
           <Text style={[styles.navText, { color: '#666' }]}>Stats</Text>
         </TouchableOpacity>
         
@@ -1051,15 +1116,18 @@ const viewJournalDetails = (journal) => {
         >
           <Icon name="plus" size={30} color="#000" />
         </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navItem}>
+      
+        <TouchableOpacity style={styles.navItem } onPress={() => navigation.navigate("Calendar")}>
           <Icon name="calendar-month" size={22} color="#666" />
           <Text style={[styles.navText, { color: '#666' }]}>Calendar</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.navItem}>
-          <Icon name="dots-horizontal" size={22} color="#666" />
-          <Text style={[styles.navText, { color: '#666' }]}>More</Text>
+        <TouchableOpacity 
+          style={styles.navItem}
+          onPress={navigateToFavorites}
+        >
+          <MaterialIcons name="favorite-border" size={22} color="#666" />
+          <Text style={[styles.navText, { color: '#666' }]}>Favourites</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
