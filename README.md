@@ -1,6 +1,6 @@
 # 🌈 MoodiFy – Track Your Emotions, Understand Your Mind
 
-<img src="assets/logo.png" alt="MoodiFy Logo" width="200"/>
+<img src="assets/logo.png" alt="MoodiFy Logo" width="180"/>
 
 Welcome to **MoodiFy**, a user friendly mood-tracking app built to help you log, reflect, and visualize your emotions over time. Whether you're navigating your mental health journey or just want to build more emotional awareness, MoodiFy gives you the tools to better understand yourself — one day at a time.
 
