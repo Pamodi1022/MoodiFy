@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "#BDD3CC",
   },
   header: {
     flexDirection: "row",
@@ -19,16 +19,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   navButton: {
-    padding: 8,
+    padding: 6,
+    marginHorizontal: 25,
+    borderRadius: 8,
   },
   monthTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#fff",
+    color: "#000",
     marginHorizontal: 10,
   },
   searchButton: {
     padding: 8,
+    fontWeight: "bold",
   },
   searchContainer: {
     flexDirection: "row",
@@ -70,29 +73,23 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#13d479",
+    backgroundColor: "black",
     marginRight: 10,
+    marginTop: 15,
   },
   dateHeaderText: {
-    color: "#aaa",
+    color: "black",
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "bold",
+    marginTop: 15,
   },
   journalEntryContainer: {
     position: "relative",
     marginBottom: 16,
   },
-  verticalConnector: {
-    position: "absolute",
-    top: 0,
-    left: 28,
-    width: 2,
-    height: "100%",
-    backgroundColor: "#333",
-    zIndex: -1,
-  },
+
   journalCard: {
-    backgroundColor: "#1a1a1a",
+    backgroundColor: "#2A2539",
     borderRadius: 12,
     padding: 16,
     marginBottom: 8,
@@ -159,7 +156,7 @@ const styles = StyleSheet.create({
   },
   journalAudio: {
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: 8,
+    borderRadius: 15,
     padding: 12,
     marginBottom: 12,
   },
@@ -173,7 +170,7 @@ const styles = StyleSheet.create({
     width: 3,
     height: 20,
     borderRadius: 2,
-    backgroundColor: "#13d479",
+    backgroundColor: "#EDEFC8",
     opacity: 0.6,
   },
   audioControls: {
@@ -182,16 +179,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   audioDuration: {
-    color: "#aaa",
+    color: "#EDEFC8",
     fontSize: 12,
   },
   audioPlayButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#13d479",
+    backgroundColor: "#EDEFC8",
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 1.5,
   },
   imageGallery: {
     flexDirection: "row",
@@ -244,7 +242,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#121212",
+    backgroundColor: "#BDD3CC",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -259,7 +257,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   navText: {
-    color: "#fff",
+    color: "balck",
     fontSize: 12,
     marginTop: 4,
   },
@@ -267,7 +265,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#13d479",
+    backgroundColor: "#EDEFC8",
     justifyContent: "center",
     alignItems: "center",
     marginTop: -30,
@@ -282,7 +280,7 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     width: "80%",
-    backgroundColor: "#222",
+    backgroundColor: "#2A2539",
     borderRadius: 12,
     overflow: "hidden",
   },
