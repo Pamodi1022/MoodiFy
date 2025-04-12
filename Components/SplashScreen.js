@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Image, Text, Animated } from 'react-native';
+import { View, StatusBar, Animated } from 'react-native';
 import { styles } from '../Styles/SplashScreen'; // Import styles
 
 const SplashScreen = () => {
@@ -23,6 +23,7 @@ const SplashScreen = () => {
 
   return (
     <View style={styles.splashContainer}>
+      <StatusBar backgroundColor="#EDEFC8" barStyle="dark-content" />
       <Animated.Image
         style={[styles.logo, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]} 
         source={require('../assets/logo.png')}
