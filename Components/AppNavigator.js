@@ -11,6 +11,8 @@ import JournalEdit from './JournalEdit';
 import Favourite from './Favourite';
 import JournalView from './JournalView';
 import Calendar from './Calendar';
+import Chart from './Chart';
+import CustomPopup from './CustomPopup';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +30,8 @@ export default function AppNavigator() {
         <Stack.Screen name="Favourite" component={Favourite} />
         <Stack.Screen name="JournalView" component={JournalView} />
         <Stack.Screen name="Calendar" component={Calendar} />
+        <Stack.Screen name="Chart" component={Chart} />
+        <Stack.Screen name="CustomPopup" component={CustomPopup} />
       </Stack.Navigator>
   );
 }

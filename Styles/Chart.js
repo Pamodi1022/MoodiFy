@@ -1,0 +1,281 @@
+import { StyleSheet} from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#2A2539',
+  },
+  scrollContent: {
+    paddingBottom: 30,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#121212',
+  },
+  loadingText: {
+    color: '#FFF',
+    marginTop: 10,
+    fontSize: 16,
+  },
+  header: {
+    paddingTop: 10,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: "#BDD3CC",
+
+  },
+  backButton: {
+    marginRight: 15,
+    padding: 8,
+  },
+  title: {
+    color: 'black',
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginLeft: -10,
+  },
+  chartContainer: {
+    padding: 10,
+    marginTop: 10,
+  },
+  weekSelector: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    backgroundColor: '#262626',
+    padding: 15,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  weekNavButton: {
+    padding: 8,
+  },
+  weekText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  chartWrapper: {
+    position: 'relative',
+    marginBottom: 40,
+  },
+  yAxisContainer: {
+    position: 'absolute',
+    left: 10,
+    top: 30,
+    height: 160,
+    justifyContent: 'space-between',
+  },
+  yAxisLabel: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  statsContainer: {
+    backgroundColor: '#262626',
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  statsTitle: {
+    color: '#7F7F7F',
+    fontSize: 14,
+  },
+  statsValue: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 4,
+  },
+  legendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+    backgroundColor: '#262626',
+    padding: 12,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'white',
+    
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 4,
+  },
+  legendText: {
+    color: '#FFF',
+    fontSize: 12,
+    marginLeft: 4,
+  },
+  chartLoadingContainer: {
+    height: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#262626',
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: 'white',
+    marginBottom: 20,
+  },
+  chartLoadingText: {
+    color: '#FFF',
+    marginTop: 10,
+    fontSize: 14,
+  },
+  chart: {
+    borderRadius: 16,
+    backgroundColor: '#262626',
+    padding: 15,
+    borderWidth: 1.5,
+    borderColor: 'white',
+    marginTop: 20,
+  },
+  emptyChartContainer: {
+    height: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#262626',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1.5,
+    borderColor: 'white',
+    marginBottom: 20,
+  },
+  emptyChartText: {
+    color: '#FFF',
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  insightsContainer: {
+    backgroundColor: '#262626',
+    borderRadius: 15,
+    padding: 15,
+    borderWidth: 1.5,
+    borderColor: 'white',
+    marginBottom: 15,
+  },
+  insightsTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  insightsList: {
+    gap: 15,
+  },
+  insightItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  insightTextContainer: {
+    marginLeft: 15,
+    flex: 1,
+  },
+  insightLabel: {
+    color: '#7F7F7F',
+    fontSize: 14,
+  },
+  insightValue: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  moodDistribution: {
+    marginTop: 10,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+  },
+  distributionTitle: {
+    color: '#7F7F7F',
+    fontSize: 14,
+    marginBottom: 10,
+  },
+  distributionBar: {
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#1E1E1E',
+    flexDirection: 'row',
+    overflow: 'hidden',
+  },
+  distributionSegment: {
+    height: '100%',
+  },
+  distributionLabels: {
+    flexDirection: 'row',
+    marginTop: 8,
+    flexWrap: 'wrap',
+  },
+  distributionLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  labelText: {
+    color: '#FFF',
+    fontSize: 12,
+    marginLeft: 4,
+  },
+  addMoodButton: {
+    backgroundColor: '#BDDBCC',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 25,
+  },
+  addMoodButtonText: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginLeft: 8,
+  },
+    // Tab bar styles
+    tabBar: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: "#BDD3CC",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderTopWidth: 1,
+        borderTopColor: "#222",
+      },
+      tabItem: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      tabText: {
+        color: "balck",
+        fontSize: 12,
+        marginTop: 4,
+      },
+      addEntryButton: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: "#EDEFC8",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: -40,
+        borderWidth: 4,
+        borderColor: "#000",
+      },
+    
+});
+
+export default styles;
