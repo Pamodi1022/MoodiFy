@@ -5,7 +5,6 @@ import {
   FlatList, 
   Image, 
   TouchableOpacity, 
-  Alert,
   ScrollView,
   Modal
 } from 'react-native';
@@ -15,6 +14,7 @@ import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import styles from '../Styles/Favourites'; 
+import CustomPopup from '../Components/CustomPopup';
 
 const Favorites = ({ navigation, route }) => {
   const [favoriteJournals, setFavoriteJournals] = useState([]);
@@ -22,6 +22,22 @@ const Favorites = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedJournal, setSelectedJournal] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupConfig, setPopupConfig] = useState({
+    title: '',
+    message: '',
+    buttons: []
+  });
+
+  // Helper function to show custom popup
+  const showCustomPopup = (title, message, buttons) => {
+    setPopupConfig({
+      title,
+      message,
+      buttons: buttons || [{ text: 'OK', onPress: () => setShowPopup(false) }]
+    });
+    setShowPopup(true);
+  };
 
   // Load activities from AsyncStorage
   const loadActivities = async () => {
@@ -32,26 +48,31 @@ const Favorites = ({ navigation, route }) => {
       } else {
         // Use default activities if none found in storage
         const defaultActivities = [
-            { id: 1, icon: 'account-group', label: 'family' },
-            { id: 2, icon: 'account-multiple', label: 'friends' },
-            { id: 3, icon: 'heart', label: 'date' },
-            { id: 4, icon: 'yoga', label: 'exercise' },
-            { id: 5, icon: 'run', label: 'sport' },
-            { id: 6, icon: 'bed', label: 'sleep early' },
-            { id: 7, icon: 'food-apple', label: 'eat healthy' },
-            { id: 8, icon: 'umbrella-beach', label: 'relax' },
-            { id: 9, icon: 'television', label: 'movies' },
-            { id: 10, icon: 'book-open-variant', label: 'read' },
-            { id: 11, icon: 'gamepad-variant', label: 'gaming' },
-            { id: 12, icon: 'broom', label: 'cleaning' },
-            { id: 13, icon: 'cart', label: 'shopping' },
-            { id: 14, icon: 'food', label: 'Cooking' },
-            { id: 15, icon: 'meditation', label: 'meditation' },
+          { id: 1, icon: 'account-group', label: 'family' },
+          { id: 2, icon: 'account-multiple', label: 'friends' },
+          { id: 3, icon: 'heart', label: 'date' },
+          { id: 4, icon: 'yoga', label: 'exercise' },
+          { id: 5, icon: 'run', label: 'sport' },
+          { id: 6, icon: 'bed', label: 'sleep early' },
+          { id: 7, icon: 'food-apple', label: 'eat healthy' },
+          { id: 8, icon: 'umbrella-beach', label: 'relax' },
+          { id: 9, icon: 'television', label: 'movies' },
+          { id: 10, icon: 'book-open-variant', label: 'read' },
+          { id: 11, icon: 'gamepad-variant', label: 'gaming' },
+          { id: 12, icon: 'broom', label: 'cleaning' },
+          { id: 13, icon: 'cart', label: 'shopping' },
+          { id: 14, icon: 'food', label: 'Cooking' },
+          { id: 15, icon: 'meditation', label: 'meditation' },
         ];
         setActivities(defaultActivities);
       }
     } catch (error) {
       console.error('Error loading activities:', error);
+      showCustomPopup(
+        'Error', 
+        'Failed to load activities',
+        [{ text: 'OK', onPress: () => setShowPopup(false) }]
+      );
     }
   };
 
@@ -77,7 +98,11 @@ const Favorites = ({ navigation, route }) => {
       }
     } catch (error) {
       console.error('Error loading favorites:', error);
-      Alert.alert('Error', 'Failed to load favorite journals');
+      showCustomPopup(
+        'Error', 
+        'Failed to load favorite journals',
+        [{ text: 'OK', onPress: () => setShowPopup(false) }]
+      );
     } finally {
       setRefreshing(false);
     }
@@ -118,16 +143,21 @@ const Favorites = ({ navigation, route }) => {
         setShowDetailsModal(false);
       }
       
-      Alert.alert(
+      showCustomPopup(
         updatedFavoriteStatus ? 'Added to Favorites' : 'Removed from Favorites',
         updatedFavoriteStatus 
           ? 'This journal has been added to your favorites' 
-          : 'This journal has been removed from your favorites'
+          : 'This journal has been removed from your favorites',
+        [{ text: 'OK', onPress: () => setShowPopup(false) }]
       );
       
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      Alert.alert('Error', 'Failed to update favorite status');
+      showCustomPopup(
+        'Error', 
+        'Failed to update favorite status',
+        [{ text: 'OK', onPress: () => setShowPopup(false) }]
+      );
     }
   };
 
@@ -196,6 +226,15 @@ const Favorites = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
+      {/* Custom Popup */}
+      <CustomPopup
+        visible={showPopup}
+        title={popupConfig.title}
+        message={popupConfig.message}
+        buttons={popupConfig.buttons}
+        onDismiss={() => setShowPopup(false)}
+      />
+
       {/* Header with Back Button */}
       <View style={styles.header}>
         <TouchableOpacity onPress={navigateToDashboard} style={styles.backButton}>
@@ -287,7 +326,7 @@ const Favorites = ({ navigation, route }) => {
                         
                         return (
                           <View key={activityId} style={styles.activityItem}>
-                            <Icons name={activity.icons} size={20} color="#555" />
+                            <Icons name={activity.icon} size={20} color="#555" />
                             <Text style={styles.activityText}>{activity.label}</Text>
                           </View>
                         );
@@ -346,7 +385,7 @@ const Favorites = ({ navigation, route }) => {
           <Icons name="notebook" size={22} color="#666" fontWeight="bold" />
           <Text style={styles.tabText}>Entries</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate("Chart")}>
           <Icons name="chart-line" size={24} color="gray" />
           <Text style={styles.tabText}>Stats</Text>
         </TouchableOpacity>
