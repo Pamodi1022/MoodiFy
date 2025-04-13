@@ -580,7 +580,7 @@ const MoodCalendar = ({ navigation }) => {
           <Icon name="clipboard-text-outline" size={24} color="gray" />
           <Text style={styles.tabText}>Entries</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate("Chart")}>
           <Icon name="chart-line" size={24} color="gray" />
           <Text style={styles.tabText}>Stats</Text>
         </TouchableOpacity>

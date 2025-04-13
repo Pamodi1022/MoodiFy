@@ -1105,7 +1105,7 @@ const viewJournalDetails = (journal) => {
           <Text style={styles.navText}>Entries</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Chart")}>
           <Icon name="chart-line" size={22} color="#666" fontWeight="bold"/>
           <Text style={[styles.navText, { color: '#666' }]}>Stats</Text>
         </TouchableOpacity>
