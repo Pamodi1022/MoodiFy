@@ -57,7 +57,7 @@ Ready to experience **MoodiFy** on your mobile device? Just follow these steps t
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/Pamodi1022/MoodiFy.git
+   git clone https://github.com/Pamodi1022/MoodiFy
    cd MoodiFy
    ```
 
