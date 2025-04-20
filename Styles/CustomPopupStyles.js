@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   popupContainer: {
-    backgroundColor: 'rgb(238, 248, 229)',
+    backgroundColor: 'rgb(227, 231, 224)',
     padding: 20,
     borderRadius: 15,
     alignItems: 'center',
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   cancelButton: {
-    backgroundColor: 'rgb(131, 3, 3)',
+    backgroundColor: 'rgb(252, 120, 120)',
     padding: 10,
     borderRadius: 25,
     flex: 1,
