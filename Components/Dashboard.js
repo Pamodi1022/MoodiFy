@@ -22,6 +22,8 @@ import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
+import CustomPopup from './CustomPopup';
+
 
 const Dashboard = () => {
   const navigation = useNavigation();
@@ -44,6 +46,32 @@ const Dashboard = () => {
   // Get the current month and year for header
   const monthYearDisplay = format(currentMonth, 'MMMM yyyy');
   const today = format(new Date(), 'dd MMMM');
+
+    // Add new state for popups
+    const [showPopup, setShowPopup] = useState(false);
+    const [popupConfig, setPopupConfig] = useState({
+      title: "",
+      message: "",
+      onConfirm: null,
+      onCancel: null
+    });
+  
+    // Helper function to show popup
+    const showCustomPopup = (title, message, onConfirm, onCancel = null) => {
+      setPopupConfig({
+        title,
+        message,
+        onConfirm: () => {
+          onConfirm();
+          setShowPopup(false);
+        },
+        onCancel: onCancel ? () => {
+          onCancel();
+          setShowPopup(false);
+        } : null
+      });
+      setShowPopup(true);
+    };
 
   // Fetch journals when the screen comes into focus
   useFocusEffect(
@@ -165,7 +193,11 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error('Error loading journals:', error);
-      Alert.alert('Error', 'Failed to load journal entries.');
+      showCustomPopup(
+        'Error',
+        'Failed to load journal entries.',
+        () => {}
+      );
     }
   };
 
@@ -312,7 +344,6 @@ const handleDropdownOption = async (option) => {
       
     case 'favorite':
       await toggleFavoriteJournal(selectedJournal.id);
-      navigation.navigate('Favourite', { journalId:selectedJournal.id })
       break;
       
     case 'addPhoto':
@@ -324,17 +355,11 @@ const handleDropdownOption = async (option) => {
       break;
       
     case 'delete':
-      Alert.alert(
+      showCustomPopup(
         'Delete Entry',
         'Are you sure you want to delete this journal entry?',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { 
-            text: 'Delete', 
-            style: 'destructive',
-            onPress: () => deleteJournalEntry(selectedJournal.id)
-          }
-        ]
+        () => deleteJournalEntry(selectedJournal.id),
+        () => {}
       );
       break;
       
@@ -342,7 +367,6 @@ const handleDropdownOption = async (option) => {
       break;
   }
 
-  // Close dropdown after handling option
   setShowDropdown(false);
 };
 
@@ -351,7 +375,11 @@ const handleShareJournal = async (journal) => {
   try {
     // Request permission if needed
     if (!(await Sharing.isAvailableAsync())) {
-      Alert.alert('Sharing not available', 'Sharing is not available on this device');
+      showCustomPopup(
+        'Sharing not available',
+        'Sharing is not available on this device',
+        () => {}
+      );
       return;
     }
     
@@ -450,61 +478,64 @@ const handleShareJournal = async (journal) => {
 };
 
 const toggleFavoriteJournal = async (journalId) => {
-    try {
-      // Find journal entry
-      const journalIndex = journals.findIndex(j => j.id === journalId);
-      if (journalIndex === -1) return;
-      
-      // Create updated journals array
-      const updatedJournals = [...journals];
-      
-      // Toggle favorite status
-      const newFavoriteStatus = !updatedJournals[journalIndex].isFavorite;
-      updatedJournals[journalIndex] = {
-        ...updatedJournals[journalIndex],
-        isFavorite: newFavoriteStatus
-      };
-      
-      // Update state
-      setJournals(updatedJournals);
-      
-      // Update filtered journals if needed
-      const filteredIndex = filteredJournals.findIndex(j => j.id === journalId);
-      if (filteredIndex !== -1) {
-        const updatedFiltered = [...filteredJournals];
-        updatedFiltered[filteredIndex] = updatedJournals[journalIndex];
-        setFilteredJournals(updatedFiltered);
-      }
-      
-      // Save to storage
-      await AsyncStorage.setItem('journal_entries', JSON.stringify(updatedJournals));
-      
-      // Show confirmation and navigate if marked as favorite
-      const message = newFavoriteStatus ? 
-        'Journal entry marked as favorite' : 
-        'Journal entry removed from favorites';
-      
-      Alert.alert('Success', message);
-      
-      // Navigate to Favorites screen if marked as favorite
-      if (newFavoriteStatus) {
-        navigation.navigate('Favourite', { 
-          newFavorite: updatedJournals[journalIndex],
-          refresh: true 
-        });
-        
-        // Also save to favorites storage
-        await saveToFavorites(updatedJournals[journalIndex]);
-      } else {
-        // Remove from favorites storage
-        await removeFromFavorites(journalId);
-      }
-      
-    } catch (error) {
-      console.error('Error toggling favorite status:', error);
-      Alert.alert('Error', 'Failed to update favorite status');
+  try {
+    // Find journal entry
+    const journalIndex = journals.findIndex(j => j.id === journalId);
+    if (journalIndex === -1) return;
+    
+    // Create updated journals array
+    const updatedJournals = [...journals];
+    
+    // Toggle favorite status
+    const newFavoriteStatus = !updatedJournals[journalIndex].isFavorite;
+    updatedJournals[journalIndex] = {
+      ...updatedJournals[journalIndex],
+      isFavorite: newFavoriteStatus
+    };
+    
+    // Update state
+    setJournals(updatedJournals);
+    
+    // Update filtered journals if needed
+    const filteredIndex = filteredJournals.findIndex(j => j.id === journalId);
+    if (filteredIndex !== -1) {
+      const updatedFiltered = [...filteredJournals];
+      updatedFiltered[filteredIndex] = updatedJournals[journalIndex];
+      setFilteredJournals(updatedFiltered);
     }
-  };
+    
+    // Save to storage
+    await AsyncStorage.setItem('journal_entries', JSON.stringify(updatedJournals));
+    
+    // Show confirmation and navigate if marked as favorite
+    const message = newFavoriteStatus ? 
+      'Journal entry marked as favorite' : 
+      'Journal entry removed from favorites';
+    
+    showCustomPopup(
+      'Success',
+      message,
+      async () => {
+        if (newFavoriteStatus) {
+          navigation.navigate('Favourite', { 
+            newFavorite: updatedJournals[journalIndex],
+            refresh: true 
+          });
+        } else {
+          // Remove from favorites storage
+          await removeFromFavorites(journalId);
+        }
+      }
+    );
+  } catch (error) {
+    console.error('Error toggling favorite status:', error);
+    showCustomPopup(
+      'Error',
+      'Failed to update favorite status',
+      () => {}
+    );
+  }
+};
   
   // Helper functions to manage favorites storage
   const saveToFavorites = async (journal) => {
@@ -543,7 +574,11 @@ const handleAddPhoto = async (journalId) => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       
       if (status !== 'granted') {
-        Alert.alert('Permission Required', 'Please allow access to your photo library to add photos.');
+        showCustomPopup(
+          'Permission Required',
+          'Please allow access to your photo library to add photos.',
+          () => {}
+        );
         return;
       }
       
@@ -614,7 +649,11 @@ const handleAddPhoto = async (journalId) => {
 const handleExportVoiceMemo = async (journal) => {
   try {
     if (!journal.recordingPath) {
-      Alert.alert('No Recording', 'This journal entry does not have a voice memo.');
+      showCustomPopup(
+        'No Recording',
+        'This journal entry does not have a voice memo.',
+        () => {}
+      );
       return;
     }
     
@@ -622,7 +661,11 @@ const handleExportVoiceMemo = async (journal) => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     
     if (status !== 'granted') {
-      Alert.alert('Permission Required', 'Please allow access to your media library to save recordings.');
+      showCustomPopup(
+        'Permission Required',
+        'Please allow access to your media library to save recordings.',
+        () => {}
+      );
       return;
     }
     
@@ -1130,6 +1173,14 @@ const viewJournalDetails = (journal) => {
           <Text style={[styles.navText, { color: '#666' }]}>Favourites</Text>
         </TouchableOpacity>
       </View>
+
+      <CustomPopup
+      isVisible={showPopup}
+      title={popupConfig.title}
+      message={popupConfig.message}
+      onConfirm={popupConfig.onConfirm}
+      onCancel={popupConfig.onCancel}
+    />
     </SafeAreaView>
   );
 };

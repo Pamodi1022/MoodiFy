@@ -20,6 +20,8 @@ import { Audio } from "expo-av";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import styles from "../Styles/Journal";
+import CustomPopup from "./CustomPopup";
+
 
 const JournalPage = () => {
   const navigation = useNavigation();
@@ -61,6 +63,32 @@ const JournalPage = () => {
     { id: 15, icon: "meditation", label: "meditation" },
   ];
 
+    // Add new state for popups
+    const [showPopup, setShowPopup] = useState(false);
+    const [popupConfig, setPopupConfig] = useState({
+      title: "",
+      message: "",
+      onConfirm: null,
+      onCancel: null
+    });
+  
+    // Helper function to show popup
+    const showCustomPopup = (title, message, onConfirm, onCancel = null) => {
+      setPopupConfig({
+        title,
+        message,
+        onConfirm: () => {
+          onConfirm();
+          setShowPopup(false);
+        },
+        onCancel: onCancel ? () => {
+          onCancel();
+          setShowPopup(false);
+        } : null
+      });
+      setShowPopup(true);
+    };
+
   // Load journal data if exists
   useEffect(() => {
     const loadJournalData = async () => {
@@ -89,7 +117,7 @@ const JournalPage = () => {
           });
         }
       } catch (error) {
-        console.error("Error loading journal data:", error);
+        // console.error("Error loading journal data:", error);
       }
     };
     
@@ -128,7 +156,7 @@ const JournalPage = () => {
           JSON.stringify(journalData)
         );
       } catch (error) {
-        console.error("Error saving journal data:", error);
+        // console.error("Error saving journal data:", error);
       }
     };
 
@@ -216,11 +244,11 @@ const JournalPage = () => {
   // Handle taking a photo with camera
   const handleTakePhoto = async () => {
     const hasPermission = await requestMediaPermissions();
-
     if (!hasPermission) {
-      Alert.alert(
+      showCustomPopup(
         "Permission Denied",
-        "Camera permission is required to take photos."
+        "Camera permission is required to take photos.",
+        () => {}
       );
       return;
     }
@@ -268,11 +296,11 @@ const JournalPage = () => {
   // Handle choosing photo from gallery
   const handleChoosePhoto = async () => {
     const hasPermission = await requestMediaPermissions();
-
     if (!hasPermission) {
-      Alert.alert(
+      showCustomPopup(
         "Permission Denied",
-        "Storage permission is required to choose photos."
+        "Storage permission is required to choose photos.",
+        () => {}
       );
       return;
     }
@@ -406,11 +434,11 @@ const JournalPage = () => {
   // Handle voice recording
   const handleVoiceRecording = async () => {
     const hasPermission = await requestAudioPermission();
-
     if (!hasPermission) {
-      Alert.alert(
+      showCustomPopup(
         "Permission Denied",
-        "Microphone permission is required to record audio."
+        "Microphone permission is required to record audio.",
+        () => {}
       );
       return;
     }
@@ -457,50 +485,42 @@ const JournalPage = () => {
 
   // Delete photo
   const deletePhoto = () => {
-    Alert.alert("Delete Photo", "Are you sure you want to delete this photo?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            if (photo && photo.uri) {
-              await FileSystem.deleteAsync(photo.uri);
-            }
-            setPhoto(null);
-            setPhotoBase64(null);
-          } catch (error) {
-            console.error("Error deleting photo:", error);
+    showCustomPopup(
+      "Delete Photo",
+      "Are you sure you want to delete this photo?",
+      async () => {
+        try {
+          if (photo && photo.uri) {
+            await FileSystem.deleteAsync(photo.uri);
           }
-        },
+          setPhoto(null);
+          setPhotoBase64(null);
+        } catch (error) {
+          console.error("Error deleting photo:", error);
+        }
       },
-    ]);
+      () => {}
+    );
   };
 
   // Delete recording
   const deleteRecording = () => {
-    Alert.alert(
+    showCustomPopup(
       "Delete Recording",
       "Are you sure you want to delete this recording?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              if (recordingPath) {
-                await FileSystem.deleteAsync(recordingPath);
-              }
-              setRecordingPath(null);
-              setHasRecording(false);
-              setRecordingTime("00:00");
-            } catch (error) {
-              console.error("Error deleting recording:", error);
-            }
-          },
-        },
-      ]
+      async () => {
+        try {
+          if (recordingPath) {
+            await FileSystem.deleteAsync(recordingPath);
+          }
+          setRecordingPath(null);
+          setHasRecording(false);
+          setRecordingTime("00:00");
+        } catch (error) {
+          console.error("Error deleting recording:", error);
+        }
+      },
+      () => {}
     );
   };
 
@@ -563,12 +583,18 @@ const JournalPage = () => {
         await AsyncStorage.setItem("last_selected_mood", JSON.stringify(selectedMood));
       }
   
-      Alert.alert("Success", "Journal entry saved successfully!", [
-        { text: "OK", onPress: () => navigation.navigate("Dashboard") },
-      ]);
+      showCustomPopup(
+        "Success",
+        "Journal entry saved successfully!",
+        () => navigation.navigate("Dashboard")
+      );
     } catch (error) {
       console.error("Error saving journal entry:", error);
-      Alert.alert("Error", "Failed to save journal entry.");
+      showCustomPopup(
+        "Error",
+        "Failed to save journal entry.",
+        () => {}
+      );
     }
   };
 
@@ -748,6 +774,13 @@ const JournalPage = () => {
           )}
         </View>
       </ScrollView>
+      <CustomPopup
+        isVisible={showPopup}
+        title={popupConfig.title}
+        message={popupConfig.message}
+        onConfirm={popupConfig.onConfirm}
+        onCancel={popupConfig.onCancel}
+      />
     </SafeAreaView>
   );
 };
