@@ -117,7 +117,7 @@ const JournalPage = () => {
           });
         }
       } catch (error) {
-        console.error("Error loading journal data:", error);
+        // console.error("Error loading journal data:", error);
       }
     };
     
@@ -156,7 +156,7 @@ const JournalPage = () => {
           JSON.stringify(journalData)
         );
       } catch (error) {
-        console.error("Error saving journal data:", error);
+        // console.error("Error saving journal data:", error);
       }
     };
 
