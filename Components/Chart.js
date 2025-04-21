@@ -48,7 +48,7 @@ const MoodLineChart = ({ navigation }) => {
         setupEmptyChart();
       }
     } catch (error) {
-      console.error('Error loading mood entries:', error);
+      // console.error('Error loading mood entries:', error);
       setupEmptyChart();
     } finally {
       setIsLoading(false);
