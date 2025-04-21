@@ -340,7 +340,7 @@ const JournalPage = () => {
 
       setPhotoBase64(base64Data);
     } catch (error) {
-      console.error("Error choosing photo:", error);
+      //console.error("Error choosing photo:", error);
       Alert.alert("Error", "Failed to select photo.");
     }
   };
